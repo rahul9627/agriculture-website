@@ -5,6 +5,13 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'  # Change this in production!
 
+# For debugging production crashes - remove before final delivery
+@app.errorhandler(500)
+@app.errorhandler(Exception)
+def handle_exception(e):
+    import traceback
+    return f"<h1>Runtime Error</h1><pre>{traceback.format_exc()}</pre>", 500
+
 @app.before_request
 def track_user_session():
     """Track unique visits using session"""
