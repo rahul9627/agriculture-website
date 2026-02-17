@@ -23,16 +23,23 @@ COLLECTION_NAME = "analytics"
 # In-memory fallback if DB is not available
 _memory_analytics = None
 
+# Initialize MongoDB client globally for connection pooling/reuse
+_mongo_client = None
+if MONGO_URI:
+    try:
+        _mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+    except Exception as e:
+        print(f"Initial MongoDB connection setup failed: {e}")
+
 def get_db_collection():
-    """Get MongoDB collection or None if not configured"""
-    if not MONGO_URI:
+    """Get MongoDB collection or None if not configured/failed"""
+    if not _mongo_client:
         return None
     try:
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=2000)
-        db = client[DB_NAME]
+        db = _mongo_client[DB_NAME]
         return db[COLLECTION_NAME]
     except Exception as e:
-        print(f"MongoDB connection error: {e}")
+        print(f"MongoDB selection error: {e}")
         return None
 
 # Initialize analytics structure

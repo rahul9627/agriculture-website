@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="60">
     <title>Analytics Dashboard - Agriculture Website</title>
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -145,7 +146,7 @@
                 {% endif %}">
                 <strong>Database Status:</strong> {{ summary.db_status }}
                 {% if not summary.mongo_uri_configured %}
-                    <br>(MONGO_URI not found in env variables)
+                <br>(MONGO_URI not found in env variables)
                 {% endif %}
             </div>
         </div>
