@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ scheme.name }} - Government Scheme Details</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .detail-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .detail-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .scheme-icon-large {
+            font-size: 5em;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .info-section {
+            background-color: #F5F5F5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .info-section h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .eligibility-list,
+        .documents-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .eligibility-list li,
+        .documents-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .eligibility-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .documents-list li:before {
+            content: "📄";
+            position: absolute;
+            left: 0;
+        }
+
+        .contact-box {
+            background: linear-gradient(135deg, #E3F2FD, #BBDEFB);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .apply-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a href="{{url_for('crop_care')}}">Crop Care</a>
+            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a class="active" href="{{url_for('government_schemes')}}">Schemes</a>
+            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="detail-container">
+        <a href="{{ url_for('government_schemes') }}" class="back-button">← Back to All Schemes</a>
+
+        <div class="detail-header">
+            <div class="scheme-icon-large">{{ scheme.icon }}</div>
+            <h1>{{ scheme.full_name }}</h1>
+            <p>({{ scheme.name }})</p>
+            <div>
+                <span
+                    style="background-color: #4CAF50; color: white; padding: 5px 15px; border-radius: 15px; margin: 5px;">{{
+                    scheme.type }}</span>
+                <span
+                    style="background-color: #FF9800; color: white; padding: 5px 15px; border-radius: 15px; margin: 5px;">{{
+                    scheme.category }}</span>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>📋 About This Scheme</h3>
+            <p>{{ scheme.description }}</p>
+        </div>
+
+        <div class="info-section">
+            <h3>💰 Benefits</h3>
+            <p><strong>{{ scheme.benefits }}</strong></p>
+        </div>
+
+        <div class="info-section">
+            <h3>✅ Eligibility Criteria</h3>
+            <ul class="eligibility-list">
+                {% for criteria in scheme.eligibility %}
+                <li>{{ criteria }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>📄 Required Documents</h3>
+            <ul class="documents-list">
+                {% for doc in scheme.documents_required %}
+                <li>{{ doc }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>📝 How to Apply</h3>
+            <p>{{ scheme.how_to_apply }}</p>
+        </div>
+
+        <div class="contact-box">
+            <h3>📞 Contact Information</h3>
+            <p><strong>Website:</strong> <a href="{{ scheme.website }}" target="_blank">{{ scheme.website }}</a></p>
+            <p><strong>Helpline:</strong> {{ scheme.helpline }}</p>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ scheme.website }}" target="_blank" class="apply-button">Apply Now →</a>
+        </div>
+    </div>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

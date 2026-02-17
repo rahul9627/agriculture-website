@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ crop }} Care Guide - Agriculture Website</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .detail-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .detail-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .detail-header h1 {
+            color: #2e7d32;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+            transform: translateX(-5px);
+        }
+
+        .general-info {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .general-info h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+
+        .weather-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .weather-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .weather-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .weather-card.hot {
+            border-left: 5px solid #FF5722;
+        }
+
+        .weather-card.cold {
+            border-left: 5px solid #2196F3;
+        }
+
+        .weather-card.rainy {
+            border-left: 5px solid #00BCD4;
+        }
+
+        .weather-card.dry {
+            border-left: 5px solid #FF9800;
+        }
+
+        .weather-card.humid {
+            border-left: 5px solid #9C27B0;
+        }
+
+        .weather-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .weather-icon {
+            font-size: 2.5em;
+        }
+
+        .weather-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .weather-card.hot .weather-title {
+            color: #FF5722;
+        }
+
+        .weather-card.cold .weather-title {
+            color: #2196F3;
+        }
+
+        .weather-card.rainy .weather-title {
+            color: #00BCD4;
+        }
+
+        .weather-card.dry .weather-title {
+            color: #FF9800;
+        }
+
+        .weather-card.humid .weather-title {
+            color: #9C27B0;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .tips-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a class="active" href="{{url_for('crop_care')}}">Crop Care</a>
+            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a href="{{url_for('government_schemes')}}">Schemes</a>
+            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="detail-container">
+        <a href="{{ url_for('crop_care') }}" class="back-button">← Back to Crop Selection</a>
+
+        <div class="detail-header">
+            <h1>
+                {% if crop == 'Rice' %}🌾
+                {% elif crop == 'Wheat' %}🌾
+                {% elif crop == 'Cotton' %}🌸
+                {% elif crop == 'Maize' %}🌽
+                {% elif crop == 'Potato' %}🥔
+                {% elif crop == 'Tomato' %}🍅
+                {% elif crop == 'Onion' %}🧅
+                {% else %}🌱
+                {% endif %}
+                {{ crop }} Care Guide
+            </h1>
+            <p>Weather-based recommendations for optimal crop management</p>
+        </div>
+
+        <div class="general-info">
+            <h3>📋 General Information</h3>
+            <p>{{ care.general }}</p>
+        </div>
+
+        <div class="weather-sections">
+            <!-- Hot Weather -->
+            <div class="weather-card hot">
+                <div class="weather-header">
+                    <div class="weather-icon">☀️</div>
+                    <div class="weather-title">Hot Weather</div>
+                </div>
+                <ul class="tips-list">
+                    {% for tip in care.Hot %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Cold Weather -->
+            <div class="weather-card cold">
+                <div class="weather-header">
+                    <div class="weather-icon">❄️</div>
+                    <div class="weather-title">Cold Weather</div>
+                </div>
+                <ul class="tips-list">
+                    {% for tip in care.Cold %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Rainy Weather -->
+            <div class="weather-card rainy">
+                <div class="weather-header">
+                    <div class="weather-icon">🌧️</div>
+                    <div class="weather-title">Rainy Weather</div>
+                </div>
+                <ul class="tips-list">
+                    {% for tip in care.Rainy %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Dry Weather -->
+            <div class="weather-card dry">
+                <div class="weather-header">
+                    <div class="weather-icon">🏜️</div>
+                    <div class="weather-title">Dry Weather</div>
+                </div>
+                <ul class="tips-list">
+                    {% for tip in care.Dry %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Humid Weather -->
+            <div class="weather-card humid">
+                <div class="weather-header">
+                    <div class="weather-icon">💧</div>
+                    <div class="weather-title">Humid Weather</div>
+                </div>
+                <ul class="tips-list">
+                    {% for tip in care.Humid %}
+                    <li>{{ tip }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('crop_care') }}" class="back-button">← View Other Crops</a>
+        </div>
+    </div>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

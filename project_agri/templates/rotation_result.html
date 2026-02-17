@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rotation Recommendations for {{ current_crop }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .result-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .next-crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .crop-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            border-color: #4CAF50;
+        }
+
+        .crop-card h3 {
+            color: #2e7d32;
+            font-size: 1.5em;
+            margin-top: 0;
+        }
+
+        .rating {
+            color: #FF9800;
+            font-size: 1.2em;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .benefits-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .avoid-box {
+            background-color: #FFEBEE;
+            border-left: 5px solid #F44336;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .plans-section {
+            margin-top: 40px;
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, #F5F5F5, #E0E0E0);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plan-sequence {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .sequence-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 150px;
+            margin: 10px;
+        }
+
+        .principles-section {
+            background-color: #E3F2FD;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .principle-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a href="{{url_for('crop_care')}}">Crop Care</a>
+            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a href="{{url_for('government_schemes')}}">Schemes</a>
+            <a class="active" href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="result-container">
+        <a href="{{ url_for('crop_rotation') }}" class="back-button">← Plan Another Rotation</a>
+
+        <div class="result-header">
+            <h1>🔄 Rotation Recommendations for {{ current_crop }}</h1>
+            <p>Best crops to plant next for optimal soil health and productivity</p>
+        </div>
+
+        {% if suggestions.next_crops %}
+        <h2>🌱 Recommended Next Crops</h2>
+        <div class="next-crops-grid">
+            {% for crop in suggestions.next_crops %}
+            <div class="crop-card">
+                <h3>{{ crop.name }}</h3>
+                <p><strong>Season:</strong> {{ crop.season }}</p>
+                <div class="rating">
+                    {% for i in range(crop.rating) %}⭐{% endfor %}
+                </div>
+                <h4>Benefits:</h4>
+                <ul class="benefits-list">
+                    {% for benefit in crop.benefits %}
+                    <li>{{ benefit }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if suggestions.avoid %}
+        <div class="avoid-box">
+            <h3>⚠️ Crops to Avoid</h3>
+            <p><strong>Avoid:</strong> {{ suggestions.avoid|join(', ') }}</p>
+            <p><strong>Reason:</strong> {{ suggestions.reason }}</p>
+        </div>
+        {% endif %}
+
+        <div class="plans-section">
+            <h2>📅 Three-Year Rotation Plans</h2>
+            <p>Complete rotation plans for sustainable farming:</p>
+
+            {% for plan in three_year_plans %}
+            <div class="plan-card">
+                <h3>{{ plan.name }}</h3>
+                <div class="plan-sequence">
+                    {% for step in plan.sequence %}
+                    <div class="sequence-item">
+                        <strong>{{ step.crop }}</strong><br>
+                        <small>{{ step.season }}</small>
+                    </div>
+                    {% if not loop.last %}
+                    <div style="font-size: 2em; color: #4CAF50;">→</div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <h4>Benefits:</h4>
+                <ul class="benefits-list">
+                    {% for benefit in plan.benefits %}
+                    <li>{{ benefit }}</li>
+                    {% endfor %}
+                </ul>
+                <p><strong>Suitable for:</strong> {{ plan.suitable_for }}</p>
+                <p><strong>Income Potential:</strong> {{ plan.estimated_income }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="principles-section">
+            <h2>📚 Crop Rotation Principles</h2>
+            <p>General guidelines for effective crop rotation:</p>
+
+            {% for principle in principles %}
+            <div class="principle-card">
+                <h4>{{ principle.principle }}</h4>
+                <p>{{ principle.explanation }}</p>
+                <p><strong>Example:</strong> {{ principle.example }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

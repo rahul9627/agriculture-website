@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Rotation Planner - Agriculture Website</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .rotation-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .rotation-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .rotation-header h1 {
+            color: #2e7d32;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background-color: #E8F5E9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a href="{{url_for('crop_care')}}">Crop Care</a>
+            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a href="{{url_for('government_schemes')}}">Schemes</a>
+            <a class="active" href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="rotation-container">
+        <div class="rotation-header">
+            <h1>🔄 Crop Rotation Planner</h1>
+            <p>Plan sustainable crop sequences for better soil health and yields</p>
+        </div>
+
+        <div class="info-box">
+            <h3>🌱 Why Crop Rotation?</h3>
+            <ul>
+                <li>Improves soil fertility and structure</li>
+                <li>Breaks pest and disease cycles</li>
+                <li>Reduces fertilizer requirements</li>
+                <li>Increases overall farm productivity</li>
+                <li>Provides diversified income sources</li>
+            </ul>
+        </div>
+
+        <form action="{{ url_for('rotation_suggestions') }}" method="POST">
+            <div class="form-group">
+                <label for="crop">🌾 What crop did you just harvest?</label>
+                <select name="crop" id="crop" required>
+                    <option value="">-- Select Crop --</option>
+                    {% for crop in crops %}
+                    <option value="{{ crop }}">{{ crop }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn">Get Rotation Recommendations</button>
+        </form>
+    </div>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop_Prediction</title>
+  <link rel="stylesheet" href="/static/predictionstyle.css">
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="main-header">
+      <div class="main-header1">
+        <div class="tree">
+          <i class="fas fa-tree" style="color: #20cb34"></i>
+        </div>
+
+        <h2>Agri-Solutions</h2>
+      </div>
+
+      <div class="main-header2">
+        <div class="info2">
+          <p>
+            <i class="fas fa-mobile" style="color: #21e839"></i>(1123) 224 366
+            <br />
+            info@organicfarming.com
+          </p>
+        </div>
+
+        <div class="info3">
+          <p>
+            <i class="far fa-clock" style="color: #11ee1f"></i>6 hours - 21
+            hours
+            <br />
+            *Weekends working
+          </p>
+        </div>
+
+        <div class="info1">
+          <!-- translator script -->
+          <div id="google_element"></div>
+          <script>
+            function loadGoogleTranslate() {
+              new google.translate.TranslateElement("google_element")
+            }
+          </script>
+          <!--       -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="navbar">
+      <a href="{{url_for('index')}}">Home</a>
+      <a href="{{url_for('news')}}">News</a>
+      <a class="active" href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+      <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+      <a href="{{url_for('crop_care')}}">Crop Care</a>
+      <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+      <a href="{{url_for('government_schemes')}}">Schemes</a>
+      <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+      <a href="{{url_for('weather')}}">Weather</a>
+      <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+      <a href="{{url_for('about')}}">About</a>
+    </div>
+  </div>
+  <div class="main">
+    <img src="/static/images/background.jpg" alt="background-image">
+    <div style="text-align: center; padding: 20px;">
+      <h2 style="color: green; font-size: 2em; margin-bottom: 20px;">🌾 Crop Prediction Result 🌾</h2>
+      <p style="font-size: 1.2em; margin-bottom: 10px;">Based on your soil nutrients and environmental conditions,</p>
+      <p style="font-size: 1.5em; margin-bottom: 20px;">You should grow:</p>
+      <h1 style="color: #2e7d32; font-size: 3em; text-transform: capitalize; margin: 20px 0;">{{ prediction }}</h1>
+
+      {% if input_data %}
+      <div
+        style="background-color: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; margin: 20px auto; max-width: 500px; text-align: left;">
+        <h3 style="color: #333; margin-bottom: 15px; text-align: center;">Input Values Used:</h3>
+        <p><strong>Nitrogen:</strong> {{ input_data.nitrogen }}</p>
+        <p><strong>Phosphorus:</strong> {{ input_data.phosphorus }}</p>
+        <p><strong>Potassium:</strong> {{ input_data.potassium }}</p>
+        <p><strong>Temperature:</strong> {{ input_data.temperature }}°C</p>
+        <p><strong>Humidity:</strong> {{ input_data.humidity }}%</p>
+        <p><strong>PH:</strong> {{ input_data.ph }}</p>
+        <p><strong>Rainfall:</strong> {{ input_data.rainfall }} mm</p>
+      </div>
+      {% endif %}
+
+      <a href="{{url_for('crop_prediction')}}"
+        style="display: inline-block; margin-top: 20px; padding: 15px 30px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; font-size: 1.1em;">🔄
+        Try Again</a>
+    </div>
+  </div>
+  <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

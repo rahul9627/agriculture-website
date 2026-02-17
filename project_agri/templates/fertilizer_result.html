@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fertilizer Recommendations - {{ crop }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .result-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #4CAF50;
+        }
+
+        .result-header h1 {
+            color: #2e7d32;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+            transform: translateX(-5px);
+        }
+
+        .summary-box {
+            background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 5px solid #4CAF50;
+        }
+
+        .fertilizer-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .fertilizer-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .fertilizer-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .fertilizer-card h3 {
+            color: #2e7d32;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        .quantity {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 10px 0;
+        }
+
+        .cost {
+            font-size: 1.3em;
+            color: #FF9800;
+            font-weight: bold;
+        }
+
+        .schedule-section {
+            background-color: #FFF3E0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #FF9800;
+        }
+
+        .tips-section {
+            background-color: #E3F2FD;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #2196F3;
+        }
+
+        .tips-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tips-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .tips-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a href="{{url_for('crop_care')}}">Crop Care</a>
+            <a class="active" href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a href="{{url_for('government_schemes')}}">Schemes</a>
+            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="result-container">
+        <a href="{{ url_for('fertilizer_calculator') }}" class="back-button">← Calculate Again</a>
+
+        <div class="result-header">
+            <h1>🧪 Fertilizer Recommendations for {{ crop }}</h1>
+            <p>Based on your soil test results and farm area</p>
+        </div>
+
+        <div class="summary-box">
+            <h3>📊 Summary</h3>
+            <p><strong>Crop:</strong> {{ crop }}</p>
+            <p><strong>Farm Area:</strong> {{ result.area }} hectares</p>
+            <p><strong>Nutrient Deficit:</strong> N: {{ result.nutrient_deficit.N }} kg/ha | P: {{
+                result.nutrient_deficit.P }} kg/ha | K: {{ result.nutrient_deficit.K }} kg/ha</p>
+            <p><strong>Total Cost:</strong> <span style="color: #FF9800; font-size: 1.3em; font-weight: bold;">₹{{
+                    result.total_cost }}</span></p>
+        </div>
+
+        <h2>💊 Required Fertilizers</h2>
+        <div class="fertilizer-cards">
+            {% for fertilizer, data in result.fertilizers.items() %}
+            <div class="fertilizer-card">
+                <h3>{{ fertilizer }}</h3>
+                <p style="color: #666;">{{ data.nutrient }}</p>
+                <div class="quantity">{{ data.quantity_kg }} kg</div>
+                <p>≈ {{ data.bags_50kg }} bags (50 kg each)</p>
+                <div class="cost">₹{{ data.cost }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if result.application_schedule %}
+        <div class="schedule-section">
+            <h3>📅 Application Schedule</h3>
+            <p>Apply fertilizers in splits for better efficiency:</p>
+            <ul>
+                {% for stage, nutrients in result.application_schedule.items() %}
+                <li><strong>{{ stage }}:</strong>
+                    {% if nutrients.N > 0 %}{{ nutrients.N }}% Nitrogen{% endif %}
+                    {% if nutrients.P > 0 %}{{ nutrients.P }}% Phosphorus{% endif %}
+                    {% if nutrients.K > 0 %}{{ nutrients.K }}% Potassium{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="tips-section">
+            <h3>💡 Application Tips for {{ crop }}</h3>
+            <ul class="tips-list">
+                {% for tip in tips %}
+                <li>{{ tip }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{{ url_for('fertilizer_calculator') }}" class="back-button">Calculate for Another Crop</a>
+        </div>
+    </div>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

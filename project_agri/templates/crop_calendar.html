@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seasonal Crop Calendar - Agriculture Website</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .calendar-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+        }
+
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .calendar-header h1 {
+            color: #2e7d32;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .current-month-banner {
+            background: linear-gradient(135deg, #4CAF50, #2e7d32);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.2em;
+        }
+
+        .season-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .season-tab {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .season-tab.kharif {
+            background-color: #81C784;
+            color: white;
+        }
+
+        .season-tab.rabi {
+            background-color: #FFD54F;
+            color: #333;
+        }
+
+        .season-tab.zaid {
+            background-color: #FF9800;
+            color: white;
+        }
+
+        .season-tab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .season-tab.active {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        .season-content {
+            display: none;
+        }
+
+        .season-content.active {
+            display: block;
+        }
+
+        .season-description {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .crops-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .crop-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .crop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: #4CAF50;
+        }
+
+        .crop-emoji {
+            font-size: 3em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .crop-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .crop-info {
+            margin: 8px 0;
+            font-size: 0.95em;
+        }
+
+        .crop-info strong {
+            color: #555;
+        }
+
+        .crop-description {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="navbar">
+            <a href="{{url_for('index')}}">Home</a>
+            <a href="{{url_for('news')}}">News</a>
+            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+            <a class="active" href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+            <a href="{{url_for('crop_care')}}">Crop Care</a>
+            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+            <a href="{{url_for('government_schemes')}}">Schemes</a>
+            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+            <a href="{{url_for('weather')}}">Weather</a>
+            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+            <a href="{{url_for('about')}}">About</a>
+        </div>
+    </div>
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h1>📅 Seasonal Crop Calendar</h1>
+            <p>Discover which crops to plant in each season for optimal yield</p>
+        </div>
+
+        <div class="current-month-banner">
+            🌱 Current Month: <strong>{{ current_month }}</strong> ({{ current_season }} Season)
+        </div>
+
+        <div class="season-tabs">
+            <button class="season-tab kharif {% if current_season == 'Kharif' %}active{% endif %}"
+                onclick="showSeason('Kharif')">
+                🌧️ Kharif (Monsoon)
+            </button>
+            <button class="season-tab rabi {% if current_season == 'Rabi' %}active{% endif %}"
+                onclick="showSeason('Rabi')">
+                ❄️ Rabi (Winter)
+            </button>
+            <button class="season-tab zaid {% if current_season == 'Zaid' %}active{% endif %}"
+                onclick="showSeason('Zaid')">
+                ☀️ Zaid (Summer)
+            </button>
+        </div>
+
+        {% for season, data in calendar.items() %}
+        <div id="{{ season }}" class="season-content {% if season == current_season %}active{% endif %}">
+            <div class="season-description">
+                <h2>{{ data.season_name }}</h2>
+                <p><strong>Months:</strong> {{ data.months|join(', ') }}</p>
+                <p>{{ data.description }}</p>
+            </div>
+
+            <div class="crops-grid">
+                {% for crop in data.crops %}
+                <div class="crop-card">
+                    <div class="crop-emoji">{{ crop.emoji }}</div>
+                    <div class="crop-name">{{ crop.name }}</div>
+                    <div class="crop-info">
+                        <strong>🌱 Sowing:</strong> {{ crop.sowing }}
+                    </div>
+                    <div class="crop-info">
+                        <strong>🌾 Harvest:</strong> {{ crop.harvest }}
+                    </div>
+                    <div class="crop-info">
+                        <strong>⏱️ Duration:</strong> {{ crop.duration }}
+                    </div>
+                    <div class="crop-description">
+                        {{ crop.description }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function showSeason(season) {
+            // Hide all season contents
+            const contents = document.querySelectorAll('.season-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.season-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Show selected season
+            document.getElementById(season).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+    </script>
+
+    <script>
+        function loadGoogleTranslate() {
+            new google.translate.TranslateElement("google_element");
+        }
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+</body>
+
+</html>

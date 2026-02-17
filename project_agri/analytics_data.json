@@ -1,0 +1,35 @@
+{
+  "page_views": {
+    "About Us": 3,
+    "News": 3,
+    "Crop Rotation": 3,
+    "Fertilizer Calculator": 2,
+    "Home": 5,
+    "Crop Prediction": 1,
+    "Crop Calendar": 1,
+    "Crop Care": 1,
+    "Government Schemes": 2,
+    "Weather": 5
+  },
+  "feature_usage": {
+    "Crop Rotation": 2,
+    "Fertilizer Calculator": 1
+  },
+  "crop_searches": {},
+  "scheme_views": {
+    "PM-KISAN": 1
+  },
+  "rotation_queries": {
+    "Soybean": 1,
+    "Tomato": 1
+  },
+  "weather_queries": {
+    "Bhogpur": 1,
+    "Narendranagar (GPS)": 3
+  },
+  "fertilizer_calculations": {
+    "Watermelon": 1
+  },
+  "total_visits": 10,
+  "last_updated": "2026-02-14T14:16:20.918977"
+}
