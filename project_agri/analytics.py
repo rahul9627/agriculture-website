@@ -71,7 +71,7 @@ def load_analytics():
     
     collection = get_db_collection()
     
-    if collection:
+    if collection is not None:
         try:
             data = collection.find_one({"_id": "main_analytics"})
             if data:
@@ -96,7 +96,7 @@ def save_analytics(analytics):
     
     collection = get_db_collection()
     
-    if collection:
+    if collection is not None:
         try:
             # MongoDB doesn't like Counter/defaultdict types directly, ensure they are dicts
             data_to_save = {
