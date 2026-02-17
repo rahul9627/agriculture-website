@@ -137,6 +137,17 @@
             <h1>📊 Analytics Dashboard</h1>
             <p>Usage statistics and insights for the Agriculture Website</p>
             <p style="color: #666; font-size: 0.9em;">Last Updated: {{ summary.last_updated[:19] }}</p>
+            <div style="margin-top: 10px; padding: 10px; border-radius: 5px; display: inline-block; font-size: 0.9em; 
+                {% if summary.db_status == 'Connected' %}
+                    background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;
+                {% else %}
+                    background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;
+                {% endif %}">
+                <strong>Database Status:</strong> {{ summary.db_status }}
+                {% if not summary.mongo_uri_configured %}
+                    <br>(MONGO_URI not found in env variables)
+                {% endif %}
+            </div>
         </div>
 
         <!-- Key Statistics -->

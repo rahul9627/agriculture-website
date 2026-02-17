@@ -198,7 +198,9 @@ def get_analytics_summary():
         "top_rotations": top_rotations,
         "top_weather_cities": top_weather,
         "top_fertilizer_crops": top_fertilizer,
-        "last_updated": analytics.get("last_updated", datetime.now().isoformat())
+        "last_updated": analytics.get("last_updated", datetime.now().isoformat()),
+        "db_status": "Connected" if get_db_collection() is not None else "Disconnected (Using Memory)",
+        "mongo_uri_configured": bool(MONGO_URI)
     }
 
 # Get detailed analytics
