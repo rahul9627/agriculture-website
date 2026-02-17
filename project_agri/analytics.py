@@ -23,20 +23,27 @@ COLLECTION_NAME = "analytics"
 # In-memory fallback if DB is not available
 _memory_analytics = None
 
-# Initialize MongoDB client globally for connection pooling/reuse
+# Global variable for the MongoDB client
 _mongo_client = None
-if MONGO_URI:
-    try:
-        _mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
-    except Exception as e:
-        print(f"Initial MongoDB connection setup failed: {e}")
+
+def get_mongo_client():
+    """Get or initialize the MongoDB client lazily"""
+    global _mongo_client
+    if _mongo_client is None and MONGO_URI:
+        try:
+            # Note: dnspython is required for srv URIs
+            _mongo_client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        except Exception as e:
+            print(f"MongoDB connection setup failed: {e}")
+    return _mongo_client
 
 def get_db_collection():
     """Get MongoDB collection or None if not configured/failed"""
-    if not _mongo_client:
+    client = get_mongo_client()
+    if not client:
         return None
     try:
-        db = _mongo_client[DB_NAME]
+        db = client[DB_NAME]
         return db[COLLECTION_NAME]
     except Exception as e:
         print(f"MongoDB selection error: {e}")
