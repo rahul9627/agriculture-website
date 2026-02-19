@@ -2,6 +2,9 @@ from flask_login import UserMixin
 from pymongo import MongoClient
 import os
 from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize Bcrypt
 bcrypt = Bcrypt()
@@ -85,12 +88,18 @@ class User(UserMixin):
     def save(self):
         collection = get_users_collection()
         if collection is not None:
-            user_data = {
-                "username": self.username,
-                "email": self.email,
-                "password": self.password
-            }
-            result = collection.insert_one(user_data)
-            self.id = str(result.inserted_id)
-            return True
+            try:
+                user_data = {
+                    "username": self.username,
+                    "email": self.email,
+                    "password": self.password
+                }
+                result = collection.insert_one(user_data)
+                self.id = str(result.inserted_id)
+                return True
+            except Exception as e:
+                print(f"Error saving user to MongoDB: {e}")
+                return False
+        else:
+            print("Error: User collection not available - MongoDB connection failed or not configured.")
         return False
