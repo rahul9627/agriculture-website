@@ -365,6 +365,28 @@ def rotation_suggestions():
                          principles=principles)
 
 
+# Market Prices Route
+@app.route('/market-prices')
+def market_prices():
+    from market_prices import get_market_prices, get_states, get_commodities
+    from analytics import track_page_view
+    track_page_view('Market Prices')
+    
+    state = request.args.get('state')
+    commodity = request.args.get('commodity')
+    
+    prices = get_market_prices(state, commodity)
+    states = get_states()
+    commodities = get_commodities()
+    
+    return render_template('market_prices.html', 
+                         prices=prices, 
+                         states=states, 
+                         commodities=commodities,
+                         selected_state=state,
+                         selected_commodity=commodity)
+
+
 # Error handlers
 
 @app.errorhandler(404)

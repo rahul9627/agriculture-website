@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Real-Time Market Prices - Agri-Solutions{% endblock %}
+
+{% block content %}
+<div class="market-prices-container" style="padding: 50px 20px; max-width: 1200px; margin: 0 auto;">
+    <h1 style="text-align: center; color: #0e7e16; margin-bottom: 30px;">Real-Time Market Prices (Mandi Bhav)</h1>
+
+    <!-- Filter Form -->
+    <div class="filters"
+        style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 30px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+        <form method="get" action="{{ url_for('market_prices') }}"
+            style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: center;">
+            <div class="form-group">
+                <label for="state" style="font-weight: bold; margin-right: 10px;">Select State:</label>
+                <select name="state" id="state"
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #ddd; min-width: 200px;">
+                    <option value="">All States</option>
+                    {% for s in states %}
+                    <option value="{{ s }}" {% if selected_state==s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="commodity" style="font-weight: bold; margin-right: 10px;">Select Crop:</label>
+                <select name="commodity" id="commodity"
+                    style="padding: 10px; border-radius: 5px; border: 1px solid #ddd; min-width: 200px;">
+                    <option value="">All Crops</option>
+                    {% for c in commodities %}
+                    <option value="{{ c }}" {% if selected_commodity==c %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit"
+                style="padding: 10px 20px; background: #0e7e16; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                <i class="fas fa-search"></i> Search Prices
+            </button>
+        </form>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-responsive" style="overflow-x: auto;">
+        <table
+            style="width: 100%; border-collapse: collapse; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden;">
+            <thead>
+                <tr style="background: #0e7e16; color: white;">
+                    <th style="padding: 15px; text-align: left;">State</th>
+                    <th style="padding: 15px; text-align: left;">District</th>
+                    <th style="padding: 15px; text-align: left;">Market</th>
+                    <th style="padding: 15px; text-align: left;">Crop</th>
+                    <th style="padding: 15px; text-align: left;">Variety</th>
+                    <th style="padding: 15px; text-align: right;">Min Price (₹)</th>
+                    <th style="padding: 15px; text-align: right;">Max Price (₹)</th>
+                    <th style="padding: 15px; text-align: right;">Modal Price (₹)</th>
+                    <th style="padding: 15px; text-align: center;">Trend</th>
+                    <th style="padding: 15px; text-align: right;">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if prices %}
+                {% for item in prices %}
+                <tr style="border-bottom: 1px solid #eee; transition: background 0.3s;">
+                    <td style="padding: 15px;">{{ item.state }}</td>
+                    <td style="padding: 15px;">{{ item.district }}</td>
+                    <td style="padding: 15px; font-weight: bold;">{{ item.market }}</td>
+                    <td style="padding: 15px;"><span
+                            style="background: #e6f4ea; color: #1e8e3e; padding: 4px 8px; border-radius: 4px; font-size: 0.9em;">{{
+                            item.commodity }}</span></td>
+                    <td style="padding: 15px;">{{ item.variety }}</td>
+                    <td style="padding: 15px; text-align: right;">₹{{ item.min_price }}</td>
+                    <td style="padding: 15px; text-align: right;">₹{{ item.max_price }}</td>
+                    <td style="padding: 15px; text-align: right; font-weight: bold; color: #0e7e16;">₹{{
+                        item.modal_price }}</td>
+                    <td style="padding: 15px; text-align: center;">
+                        {% if item.trend == 'up' %}
+                        <i class="fas fa-arrow-up" style="color: green;"></i>
+                        {% elif item.trend == 'down' %}
+                        <i class="fas fa-arrow-down" style="color: red;"></i>
+                        {% else %}
+                        <i class="fas fa-minus" style="color: gray;"></i>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 15px; text-align: right; color: #666;">{{ item.arrival_date }}</td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="10" style="padding: 30px; text-align: center; color: #666;">No market data found. Try
+                        different filters.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px; text-align: right; color: #777; font-size: 0.9em;">
+        * Prices are in ₹ per Quintal. Data source: Agmarknet (Simulated).
+    </div>
+</div>
+{% endblock %}
