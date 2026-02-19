@@ -3,7 +3,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from models import User, bcrypt
 
-from flask_login import LoginManager, login_required
+from flask_login import LoginManager, login_required, current_user
+
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'  # Change this in production!
@@ -29,6 +30,20 @@ app.register_blueprint(auth_blueprint)
 def handle_exception(e):
     import traceback
     return f"<h1>Runtime Error</h1><pre>{traceback.format_exc()}</pre>", 500
+
+@app.before_request
+def require_login():
+    """Restrict access to authenticated users only"""
+    allowed_endpoints = ['auth.login', 'auth.register', 'static']
+    
+    if not request.endpoint:
+        return
+
+    if request.endpoint.startswith('static'):
+        return
+
+    if request.endpoint not in allowed_endpoints and not current_user.is_authenticated:
+        return redirect(url_for('auth.login', next=request.url))
 
 @app.before_request
 def track_user_session():
