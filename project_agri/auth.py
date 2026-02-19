@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for, flash, redirect, request
-from models import db, User, bcrypt
+from models import User, bcrypt
+
 from flask_login import login_user, current_user, logout_user, login_required
 
 auth = Blueprint('auth', __name__)
@@ -18,22 +19,24 @@ def register():
             flash('Passwords do not match', 'error')
             return render_template('register.html')
 
-        user_exists = User.query.filter_by(username=username).first()
+        user_exists = User.find_by_username(username)
         if user_exists:
             flash('Username already exists', 'error')
             return render_template('register.html')
         
-        email_exists = User.query.filter_by(email=email).first()
+        email_exists = User.find_by_email(email)
         if email_exists:
             flash('Email already registered', 'error')
             return render_template('register.html')
 
         hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         user = User(username=username, email=email, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('auth.login'))
+        if user.save():
+            flash('Your account has been created! You are now able to log in', 'success')
+            return redirect(url_for('auth.login'))
+        else:
+            flash('An error occurred while creating your account. Please try again.', 'error')
+            
     return render_template('register.html')
 
 @auth.route("/login", methods=['GET', 'POST'])
@@ -43,7 +46,7 @@ def login():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
+        user = User.find_by_email(email)
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user, remember=request.form.get('remember'))
             next_page = request.args.get('next')
