@@ -1,442 +1,414 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Weather Forecast - Agri-Solutions{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Forecast - Agriculture Website</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        .weather-container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-        }
+{% block head %}
+<style>
+    .weather-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
 
-        .weather-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .weather-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        .weather-header h1 {
-            color: #2e7d32;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+    .weather-header h1 {
+        color: #2e7d32;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
 
-        .city-selector {
-            max-width: 600px;
-            margin: 0 auto 30px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    .city-selector {
+        max-width: 600px;
+        margin: 0 auto 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .city-selector form {
-            display: flex;
-            gap: 10px;
-        }
+    .city-selector form {
+        display: flex;
+        gap: 10px;
+    }
 
-        .city-selector input,
-        .city-selector select {
-            flex: 1;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
+    .city-selector input,
+    .city-selector select {
+        flex: 1;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+    }
 
-        .city-selector button {
-            padding: 12px 30px;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+    .city-selector button {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: bold;
+    }
 
-        .city-selector button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    .city-selector button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        .current-weather {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
+    .current-weather {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
 
+    .current-weather-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .weather-icon-large {
+        text-align: center;
+    }
+
+    .weather-icon-large img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .weather-main {
+        text-align: center;
+    }
+
+    .weather-main h2 {
+        font-size: 3em;
+        margin: 0;
+    }
+
+    .weather-main .description {
+        font-size: 1.5em;
+        margin: 10px 0;
+    }
+
+    .weather-main .location {
+        font-size: 1.2em;
+        opacity: 0.9;
+    }
+
+    .weather-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .weather-detail-item {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .weather-detail-item strong {
+        display: block;
+        font-size: 0.9em;
+        opacity: 0.8;
+    }
+
+    .forecast-section {
+        margin-top: 40px;
+    }
+
+    .forecast-section h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    .forecast-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+
+    .forecast-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s;
+    }
+
+    .forecast-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .forecast-card .day {
+        font-weight: bold;
+        color: #2e7d32;
+        margin-bottom: 10px;
+    }
+
+    .forecast-card img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .forecast-card .temp {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .forecast-card .temp-range {
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .forecast-card .description {
+        color: #666;
+        margin-top: 10px;
+    }
+
+    .recommendations-section {
+        margin-top: 40px;
+        background: #E8F5E9;
+        padding: 30px;
+        border-radius: 10px;
+        border-left: 5px solid #4CAF50;
+    }
+
+    .recommendations-section h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    .recommendations-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .recommendations-list li {
+        padding: 12px 0;
+        padding-left: 30px;
+        position: relative;
+        font-size: 1.1em;
+    }
+
+    .recommendations-list li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #4CAF50;
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .alerts-section {
+        background: #FFF3E0;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #FF9800;
+        margin-bottom: 20px;
+    }
+
+    .alerts-section h3 {
+        color: #F57C00;
+        margin-top: 0;
+    }
+
+    .error-message {
+        background: #FFEBEE;
+        color: #C62828;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
         .current-weather-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .weather-icon-large {
-            text-align: center;
-        }
-
-        .weather-icon-large img {
-            width: 120px;
-            height: 120px;
-        }
-
-        .weather-main {
-            text-align: center;
-        }
-
-        .weather-main h2 {
-            font-size: 3em;
-            margin: 0;
-        }
-
-        .weather-main .description {
-            font-size: 1.5em;
-            margin: 10px 0;
-        }
-
-        .weather-main .location {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .weather-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .weather-detail-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .weather-detail-item strong {
-            display: block;
-            font-size: 0.9em;
-            opacity: 0.8;
-        }
-
-        .forecast-section {
-            margin-top: 40px;
-        }
-
-        .forecast-section h2 {
-            color: #2e7d32;
-            margin-bottom: 20px;
+            grid-template-columns: 1fr;
         }
 
         .forecast-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         }
+    }
+</style>
+{% endblock %}
 
-        .forecast-card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .forecast-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .forecast-card .day {
-            font-weight: bold;
-            color: #2e7d32;
-            margin-bottom: 10px;
-        }
-
-        .forecast-card img {
-            width: 60px;
-            height: 60px;
-        }
-
-        .forecast-card .temp {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-
-        .forecast-card .temp-range {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .forecast-card .description {
-            color: #666;
-            margin-top: 10px;
-        }
-
-        .recommendations-section {
-            margin-top: 40px;
-            background: #E8F5E9;
-            padding: 30px;
-            border-radius: 10px;
-            border-left: 5px solid #4CAF50;
-        }
-
-        .recommendations-section h2 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-        }
-
-        .recommendations-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .recommendations-list li {
-            padding: 12px 0;
-            padding-left: 30px;
-            position: relative;
-            font-size: 1.1em;
-        }
-
-        .recommendations-list li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #4CAF50;
-            font-weight: bold;
-            font-size: 1.3em;
-        }
-
-        .alerts-section {
-            background: #FFF3E0;
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #FF9800;
-            margin-bottom: 20px;
-        }
-
-        .alerts-section h3 {
-            color: #F57C00;
-            margin-top: 0;
-        }
-
-        .error-message {
-            background: #FFEBEE;
-            color: #C62828;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        @media (max-width: 768px) {
-            .current-weather-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .forecast-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="header">
-        <div class="navbar">
-            <a href="{{url_for('index')}}">Home</a>
-            <a href="{{url_for('news')}}">News</a>
-            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
-            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
-            <a href="{{url_for('crop_care')}}">Crop Care</a>
-            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
-            <a href="{{url_for('government_schemes')}}">Schemes</a>
-            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
-            <a class="active" href="{{url_for('weather')}}">Weather</a>
-            <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
-            <a href="{{url_for('about')}}">About</a>
-        </div>
+{% block content %}
+<div class="weather-container">
+    <div class="weather-header">
+        <h1>⛅ Weather Forecast</h1>
+        <p>Get real-time weather data and farming recommendations</p>
     </div>
 
-    <div class="weather-container">
-        <div class="weather-header">
-            <h1>⛅ Weather Forecast</h1>
-            <p>Get real-time weather data and farming recommendations</p>
-        </div>
+    <div class="city-selector">
+        <form action="{{ url_for('weather') }}" method="GET">
+            <select name="city" id="city">
+                <option value="">-- Select City --</option>
+                {% for city_name in cities %}
+                <option value="{{ city_name }}" {% if city_name==city %}selected{% endif %}>{{ city_name }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="custom_city" placeholder="Or enter city name"
+                value="{{ custom_city if custom_city else '' }}">
+            <button type="submit">Get Weather</button>
+            <button type="button" onclick="getLocation()"
+                style="background: linear-gradient(135deg, #2196F3, #1976D2); margin-left: 10px;">
+                📍 Use My Location
+            </button>
+        </form>
+    </div>
 
-        <div class="city-selector">
-            <form action="{{ url_for('weather') }}" method="GET">
-                <select name="city" id="city">
-                    <option value="">-- Select City --</option>
-                    {% for city_name in cities %}
-                    <option value="{{ city_name }}" {% if city_name==city %}selected{% endif %}>{{ city_name }}</option>
-                    {% endfor %}
-                </select>
-                <input type="text" name="custom_city" placeholder="Or enter city name"
-                    value="{{ custom_city if custom_city else '' }}">
-                <button type="submit">Get Weather</button>
-                <button type="button" onclick="getLocation()"
-                    style="background: linear-gradient(135deg, #2196F3, #1976D2); margin-left: 10px;">
-                    📍 Use My Location
-                </button>
-            </form>
-        </div>
+    {% if error %}
+    <div class="error-message">
+        <h3>⚠️ {{ error }}</h3>
+        <p>Please try another city or check your API key configuration.</p>
+    </div>
+    {% endif %}
 
-        {% if error %}
-        <div class="error-message">
-            <h3>⚠️ {{ error }}</h3>
-            <p>Please try another city or check your API key configuration.</p>
-        </div>
-        {% endif %}
+    {% if current %}
+    <div class="current-weather">
+        <div class="current-weather-grid">
+            <div class="weather-icon-large">
+                <img src="http://openweathermap.org/img/wn/{{ current.icon }}@4x.png" alt="{{ current.description }}">
+            </div>
 
-        {% if current %}
-        <div class="current-weather">
-            <div class="current-weather-grid">
-                <div class="weather-icon-large">
-                    <img src="http://openweathermap.org/img/wn/{{ current.icon }}@4x.png"
-                        alt="{{ current.description }}">
+            <div class="weather-main">
+                <h2>{{ current.temperature }}°C</h2>
+                <div class="description">{{ current.description }}</div>
+                <div class="location">📍 {{ current.city }}, {{ current.country }}</div>
+                <div style="margin-top: 10px; opacity: 0.9;">Feels like {{ current.feels_like }}°C</div>
+            </div>
+
+            <div class="weather-details">
+                <div class="weather-detail-item">
+                    <strong>💧 Humidity</strong>
+                    {{ current.humidity }}%
                 </div>
-
-                <div class="weather-main">
-                    <h2>{{ current.temperature }}°C</h2>
-                    <div class="description">{{ current.description }}</div>
-                    <div class="location">📍 {{ current.city }}, {{ current.country }}</div>
-                    <div style="margin-top: 10px; opacity: 0.9;">Feels like {{ current.feels_like }}°C</div>
+                <div class="weather-detail-item">
+                    <strong>💨 Wind Speed</strong>
+                    {{ current.wind_speed }} km/h
                 </div>
-
-                <div class="weather-details">
-                    <div class="weather-detail-item">
-                        <strong>💧 Humidity</strong>
-                        {{ current.humidity }}%
-                    </div>
-                    <div class="weather-detail-item">
-                        <strong>💨 Wind Speed</strong>
-                        {{ current.wind_speed }} km/h
-                    </div>
-                    <div class="weather-detail-item">
-                        <strong>🌅 Sunrise</strong>
-                        {{ current.sunrise }}
-                    </div>
-                    <div class="weather-detail-item">
-                        <strong>🌇 Sunset</strong>
-                        {{ current.sunset }}
-                    </div>
+                <div class="weather-detail-item">
+                    <strong>🌅 Sunrise</strong>
+                    {{ current.sunrise }}
+                </div>
+                <div class="weather-detail-item">
+                    <strong>🌇 Sunset</strong>
+                    {{ current.sunset }}
                 </div>
             </div>
         </div>
+    </div>
 
-        {% if recommendations.alerts %}
-        <div class="alerts-section">
-            <h3>⚠️ Weather Alerts</h3>
-            <ul>
-                {% for alert in recommendations.alerts %}
-                <li>{{ alert }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
+    {% if recommendations.alerts %}
+    <div class="alerts-section">
+        <h3>⚠️ Weather Alerts</h3>
+        <ul>
+            {% for alert in recommendations.alerts %}
+            <li>{{ alert }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
-        <div class="recommendations-section">
-            <h2>🌾 Farming Recommendations</h2>
-            <ul class="recommendations-list">
-                {% for rec in recommendations.recommendations %}
-                <li>{{ rec }}</li>
-                {% endfor %}
-            </ul>
+    <div class="recommendations-section">
+        <h2>🌾 Farming Recommendations</h2>
+        <ul class="recommendations-list">
+            {% for rec in recommendations.recommendations %}
+            <li>{{ rec }}</li>
+            {% endfor %}
+        </ul>
 
-            {% if recommendations.best_activities %}
-            <h3 style="margin-top: 30px; color: #2e7d32;">✅ Best Activities for Today:</h3>
-            <ul class="recommendations-list">
-                {% for activity in recommendations.best_activities %}
-                <li>{{ activity }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        {% if forecast %}
-        <div class="forecast-section">
-            <h2>📅 7-Day Forecast</h2>
-            <div class="forecast-grid">
-                {% for day in forecast.forecasts %}
-                <div class="forecast-card">
-                    <div class="day">{{ day.day }}</div>
-                    <div style="font-size: 0.9em; color: #666;">{{ day.date }}</div>
-                    <img src="http://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="{{ day.description }}">
-                    <div class="temp">{{ day.temp_avg }}°C</div>
-                    <div class="temp-range">{{ day.temp_min }}° - {{ day.temp_max }}°</div>
-                    <div class="description">{{ day.description }}</div>
-                    <div style="margin-top: 10px; font-size: 0.9em;">
-                        💧 {{ day.humidity }}%
-                        {% if day.rain_probability > 0 %}
-                        <br>🌧️ {{ day.rain_probability }}%
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
+        {% if recommendations.best_activities %}
+        <h3 style="margin-top: 30px; color: #2e7d32;">✅ Best Activities for Today:</h3>
+        <ul class="recommendations-list">
+            {% for activity in recommendations.best_activities %}
+            <li>{{ activity }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
     </div>
 
-    <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                // Show loading state or message if desired
-                const btn = document.querySelector('button[onclick="getLocation()"]');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '📍 Locating...';
+    {% if forecast %}
+    <div class="forecast-section">
+        <h2>📅 7-Day Forecast</h2>
+        <div class="forecast-grid">
+            {% for day in forecast.forecasts %}
+            <div class="forecast-card">
+                <div class="day">{{ day.day }}</div>
+                <div style="font-size: 0.9em; color: #666;">{{ day.date }}</div>
+                <img src="http://openweathermap.org/img/wn/{{ day.icon }}@2x.png" alt="{{ day.description }}">
+                <div class="temp">{{ day.temp_avg }}°C</div>
+                <div class="temp-range">{{ day.temp_min }}° - {{ day.temp_max }}°</div>
+                <div class="description">{{ day.description }}</div>
+                <div style="margin-top: 10px; font-size: 0.9em;">
+                    💧 {{ day.humidity }}%
+                    {% if day.rain_probability > 0 %}
+                    <br>🌧️ {{ day.rain_probability }}%
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
 
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-
-                // Reset button text after 5 seconds if no response (optional safety)
-                setTimeout(() => {
-                    if (btn.innerHTML === '📍 Locating...') btn.innerHTML = originalText;
-                }, 5000);
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-
-        function showPosition(position) {
-            window.location.href = "/weather?lat=" + position.coords.latitude +
-                "&lon=" + position.coords.longitude;
-        }
-
-        function showError(error) {
+{% block scripts %}
+<script>
+    function getLocation() {
+        if (navigator.geolocation) {
             const btn = document.querySelector('button[onclick="getLocation()"]');
-            btn.innerHTML = '📍 Use My Location';
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '📍 Locating...';
 
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("User denied the request for Geolocation. Please verify permissions.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information is unavailable.");
-                    break;
-                case error.TIMEOUT:
-                    alert("The request to get user location timed out.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("An unknown error occurred.");
-                    break;
-            }
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+
+            setTimeout(() => {
+                if (btn.innerHTML === '📍 Locating...') btn.innerHTML = originalText;
+            }, 5000);
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
+    }
 
-        function loadGoogleTranslate() {
-            new google.translate.TranslateElement("google_element");
+    function showPosition(position) {
+        window.location.href = "/weather?lat=" + position.coords.latitude +
+            "&lon=" + position.coords.longitude;
+    }
+
+    function showError(error) {
+        const btn = document.querySelector('button[onclick="getLocation()"]');
+        btn.innerHTML = '📍 Use My Location';
+
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                alert("User denied the request for Geolocation. Please verify permissions.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Location information is unavailable.");
+                break;
+            case error.TIMEOUT:
+                alert("The request to get user location timed out.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("An unknown error occurred.");
+                break;
         }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
-</body>
-
-</html>
+    }
+</script>
+{% endblock %}

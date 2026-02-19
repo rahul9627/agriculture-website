@@ -1,321 +1,293 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Analytics Dashboard - Agri-Solutions{% endblock %}
+{% block head %}
+<meta http-equiv="refresh" content="60">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .analytics-container {
+        max-width: 1400px;
+        margin: 20px auto;
+        padding: 20px;
+    }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="60">
-    <title>Analytics Dashboard - Agriculture Website</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .analytics-container {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 20px;
-        }
+    .analytics-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-        .analytics-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+    .analytics-header h1 {
+        color: #2e7d32;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
 
-        .analytics-header h1 {
-            color: #2e7d32;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
 
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-card h3 {
+        font-size: 0.9em;
+        margin-bottom: 10px;
+        opacity: 0.9;
+    }
+
+    .stat-card .number {
+        font-size: 2.5em;
+        font-weight: bold;
+    }
+
+    .chart-section {
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 25px;
+    }
+
+    .chart-section h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+    }
+
+    .top-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+    }
+
+    .top-items-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .top-items-card h3 {
+        color: #2e7d32;
+        margin-bottom: 15px;
+    }
+
+    .top-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        margin: 5px 0;
+        background: #f5f5f5;
+        border-radius: 5px;
+        border-left: 4px solid #4CAF50;
+    }
+
+    .top-item .name {
+        font-weight: 600;
+    }
+
+    .top-item .count {
+        color: #666;
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: 1fr;
         }
+    }
+</style>
+{% endblock %}
 
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card h3 {
-            font-size: 0.9em;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
-
-        .stat-card .number {
-            font-size: 2.5em;
-            font-weight: bold;
-        }
-
-        .chart-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 25px;
-        }
-
-        .chart-section h2 {
-            color: #2e7d32;
-            margin-bottom: 20px;
-            font-size: 1.5em;
-        }
-
-        .top-items-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .top-items-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .top-items-card h3 {
-            color: #2e7d32;
-            margin-bottom: 15px;
-        }
-
-        .top-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            margin: 5px 0;
-            background: #f5f5f5;
-            border-radius: 5px;
-            border-left: 4px solid #4CAF50;
-        }
-
-        .top-item .name {
-            font-weight: 600;
-        }
-
-        .top-item .count {
-            color: #666;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="header">
-        <div class="navbar">
-            <a href="{{url_for('index')}}">Home</a>
-            <a href="{{url_for('news')}}">News</a>
-            <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
-            <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
-            <a href="{{url_for('crop_care')}}">Crop Care</a>
-            <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
-            <a href="{{url_for('government_schemes')}}">Schemes</a>
-            <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
-            <a href="{{url_for('weather')}}">Weather</a>
-            <a class="active" href="{{url_for('analytics_dashboard')}}">Analytics</a>
-            <a href="{{url_for('about')}}">About</a>
-        </div>
-    </div>
-
-    <div class="analytics-container">
-        <div class="analytics-header">
-            <h1>📊 Analytics Dashboard</h1>
-            <p>Usage statistics and insights for the Agriculture Website</p>
-            <p style="color: #666; font-size: 0.9em;">Last Updated: {{ summary.last_updated[:19] }}</p>
-            <div style="margin-top: 10px; padding: 10px; border-radius: 5px; display: inline-block; font-size: 0.9em; 
+{% block content %}
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h1>📊 Analytics Dashboard</h1>
+        <p>Usage statistics and insights for the Agriculture Website</p>
+        <p style="color: #666; font-size: 0.9em;">Last Updated: {{ summary.last_updated[:19] }}</p>
+        <div style="margin-top: 10px; padding: 10px; border-radius: 5px; display: inline-block; font-size: 0.9em; 
                 {% if summary.db_status == 'Connected' %}
                     background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9;
                 {% else %}
                     background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;
                 {% endif %}">
-                <strong>Database Status:</strong> {{ summary.db_status }}
-                {% if not summary.mongo_uri_configured %}
-                <br>(MONGO_URI not found in env variables)
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Key Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <h3>Total Visits</h3>
-                <div class="number">{{ summary.total_visits }}</div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h3>Page Views</h3>
-                <div class="number">{{ summary.total_page_views }}</div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                <h3>Features Used</h3>
-                <div class="number">{{ summary.total_features_used }}</div>
-            </div>
-            <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                <h3>Unique Crops</h3>
-                <div class="number">{{ summary.top_crops|length + summary.top_fertilizer_crops|length }}</div>
-            </div>
-        </div>
-
-        <!-- Charts -->
-        <div class="chart-section">
-            <h2>📈 Top Pages</h2>
-            <canvas id="pagesChart" height="80"></canvas>
-        </div>
-
-        <div class="chart-section">
-            <h2>🔧 Feature Usage</h2>
-            <canvas id="featuresChart" height="80"></canvas>
-        </div>
-
-        <!-- Top Items -->
-        <div class="top-items-grid">
-            <div class="top-items-card">
-                <h3>🌾 Top Crops Searched</h3>
-                {% if summary.top_crops %}
-                {% for crop, count in summary.top_crops %}
-                <div class="top-item">
-                    <span class="name">{{ crop }}</span>
-                    <span class="count">{{ count }} searches</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #666;">No data yet</p>
-                {% endif %}
-            </div>
-
-            <div class="top-items-card">
-                <h3>🏛️ Top Schemes Viewed</h3>
-                {% if summary.top_schemes %}
-                {% for scheme, count in summary.top_schemes %}
-                <div class="top-item">
-                    <span class="name">{{ scheme }}</span>
-                    <span class="count">{{ count }} views</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #666;">No data yet</p>
-                {% endif %}
-            </div>
-
-            <div class="top-items-card">
-                <h3>🔄 Top Rotation Queries</h3>
-                {% if summary.top_rotations %}
-                {% for crop, count in summary.top_rotations %}
-                <div class="top-item">
-                    <span class="name">{{ crop }}</span>
-                    <span class="count">{{ count }} queries</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #666;">No data yet</p>
-                {% endif %}
-            </div>
-
-            <div class="top-items-card">
-                <h3>⛅ Top Weather Cities</h3>
-                {% if summary.top_weather_cities %}
-                {% for city, count in summary.top_weather_cities %}
-                <div class="top-item">
-                    <span class="name">{{ city }}</span>
-                    <span class="count">{{ count }} queries</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #666;">No data yet</p>
-                {% endif %}
-            </div>
-
-            <div class="top-items-card">
-                <h3>🧪 Top Fertilizer Calculations</h3>
-                {% if summary.top_fertilizer_crops %}
-                {% for crop, count in summary.top_fertilizer_crops %}
-                <div class="top-item">
-                    <span class="name">{{ crop }}</span>
-                    <span class="count">{{ count }} calculations</span>
-                </div>
-                {% endfor %}
-                {% else %}
-                <p style="color: #666;">No data yet</p>
-                {% endif %}
-            </div>
+            <strong>Database Status:</strong> {{ summary.db_status }}
+            {% if not summary.mongo_uri_configured %}
+            <br>(MONGO_URI not found in env variables)
+            {% endif %}
         </div>
     </div>
 
-    <script>
-        // Top Pages Chart
-        const pagesCtx = document.getElementById('pagesChart').getContext('2d');
-        const pagesData = {{ summary.top_pages | tojson }};
-        new Chart(pagesCtx, {
-            type: 'bar',
-            data: {
-                labels: pagesData.map(item => item[0]),
-                datasets: [{
-                    label: 'Page Views',
-                    data: pagesData.map(item => item[1]),
-                    backgroundColor: 'rgba(76, 175, 80, 0.6)',
-                    borderColor: 'rgba(76, 175, 80, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
+    <!-- Key Statistics -->
+    <div class="stats-grid">
+        <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <h3>Total Visits</h3>
+            <div class="number">{{ summary.total_visits }}</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <h3>Page Views</h3>
+            <div class="number">{{ summary.total_page_views }}</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <h3>Features Used</h3>
+            <div class="number">{{ summary.total_features_used }}</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <h3>Unique Crops</h3>
+            <div class="number">{{ summary.top_crops|length + summary.top_fertilizer_crops|length }}</div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-section">
+        <h2>📈 Top Pages</h2>
+        <canvas id="pagesChart" height="80"></canvas>
+    </div>
+
+    <div class="chart-section">
+        <h2>🔧 Feature Usage</h2>
+        <canvas id="featuresChart" height="80"></canvas>
+    </div>
+
+    <!-- Top Items -->
+    <div class="top-items-grid">
+        <div class="top-items-card">
+            <h3>🌾 Top Crops Searched</h3>
+            {% if summary.top_crops %}
+            {% for crop, count in summary.top_crops %}
+            <div class="top-item">
+                <span class="name">{{ crop }}</span>
+                <span class="count">{{ count }} searches</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: #666;">No data yet</p>
+            {% endif %}
+        </div>
+
+        <div class="top-items-card">
+            <h3>🏛️ Top Schemes Viewed</h3>
+            {% if summary.top_schemes %}
+            {% for scheme, count in summary.top_schemes %}
+            <div class="top-item">
+                <span class="name">{{ scheme }}</span>
+                <span class="count">{{ count }} views</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: #666;">No data yet</p>
+            {% endif %}
+        </div>
+
+        <div class="top-items-card">
+            <h3>🔄 Top Rotation Queries</h3>
+            {% if summary.top_rotations %}
+            {% for crop, count in summary.top_rotations %}
+            <div class="top-item">
+                <span class="name">{{ crop }}</span>
+                <span class="count">{{ count }} queries</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: #666;">No data yet</p>
+            {% endif %}
+        </div>
+
+        <div class="top-items-card">
+            <h3>⛅ Top Weather Cities</h3>
+            {% if summary.top_weather_cities %}
+            {% for city, count in summary.top_weather_cities %}
+            <div class="top-item">
+                <span class="name">{{ city }}</span>
+                <span class="count">{{ count }} queries</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: #666;">No data yet</p>
+            {% endif %}
+        </div>
+
+        <div class="top-items-card">
+            <h3>🧪 Top Fertilizer Calculations</h3>
+            {% if summary.top_fertilizer_crops %}
+            {% for crop, count in summary.top_fertilizer_crops %}
+            <div class="top-item">
+                <span class="name">{{ crop }}</span>
+                <span class="count">{{ count }} calculations</span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: #666;">No data yet</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Top Pages Chart
+    const pagesCtx = document.getElementById('pagesChart').getContext('2d');
+    const pagesData = {{ summary.top_pages | tojson }};
+    new Chart(pagesCtx, {
+        type: 'bar',
+        data: {
+            labels: pagesData.map(item => item[0]),
+            datasets: [{
+                label: 'Page Views',
+                data: pagesData.map(item => item[1]),
+                backgroundColor: 'rgba(76, 175, 80, 0.6)',
+                borderColor: 'rgba(76, 175, 80, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                y: {
+                    beginAtZero: true
                 }
             }
-        });
-
-        // Features Chart
-        const featuresCtx = document.getElementById('featuresChart').getContext('2d');
-        const featuresData = {{ summary.top_features | tojson }};
-        new Chart(featuresCtx, {
-            type: 'horizontalBar',
-            data: {
-                labels: featuresData.map(item => item[0]),
-                datasets: [{
-                    label: 'Usage Count',
-                    data: featuresData.map(item => item[1]),
-                    backgroundColor: 'rgba(33, 150, 243, 0.6)',
-                    borderColor: 'rgba(33, 150, 243, 1)',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-
-    <script>
-        function loadGoogleTranslate() {
-            new google.translate.TranslateElement("google_element");
         }
-    </script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
-</body>
+    });
 
-</html>
+    // Features Chart
+    const featuresCtx = document.getElementById('featuresChart').getContext('2d');
+    const featuresData = {{ summary.top_features | tojson }};
+    new Chart(featuresCtx, {
+        type: 'horizontalBar',
+        data: {
+            labels: featuresData.map(item => item[0]),
+            datasets: [{
+                label: 'Usage Count',
+                data: featuresData.map(item => item[1]),
+                backgroundColor: 'rgba(33, 150, 243, 0.6)',
+                borderColor: 'rgba(33, 150, 243, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,9 +1,34 @@
 import joblib
 import os
 from flask import Flask, render_template, request, flash, redirect, url_for, session
+from models import db, User, bcrypt
+from flask_login import LoginManager, login_required
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-change-in-production'  # Change this in production!
+
+# Database configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db.init_app(app)
+bcrypt.init_app(app)
+
+login_manager = LoginManager(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# Register Auth Blueprint
+from auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
+# Create database tables if they don't exist
+with app.app_context():
+    db.create_all()
 
 # For debugging production crashes - remove before final delivery
 @app.errorhandler(500)
@@ -229,6 +254,7 @@ def scheme_detail(scheme_id):
 
 
 @app.route('/analytics')
+@login_required
 def analytics_dashboard():
     """Analytics dashboard showing usage statistics"""
     from analytics import get_analytics_summary

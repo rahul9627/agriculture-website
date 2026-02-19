@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+  <title>{% block title %}Agri-Solutions{% endblock %}</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  <div id="main">
+    <div class="wrapper">
+      <div class="main-header">
+        <div class="main-header1">
+          <div class="tree">
+            <i class="fas fa-tree" style="color: #20cb34"></i>
+          </div>
+          <h2>Agri-Solutions</h2>
+        </div>
+
+        <div class="main-header2">
+          <div class="info2">
+            <p>
+              <i class="fas fa-mobile" style="color: #21e839"></i>(1123) 224 366
+              <br />
+              info@agrisolutions.com
+            </p>
+          </div>
+
+          <div class="info3">
+            <p>
+              <i class="far fa-clock" style="color: #11ee1f"></i>6 hours - 21 hours
+              <br />
+              *Weekends working
+            </p>
+          </div>
+
+          <div class="info1">
+            <div id="google_element"></div>
+            <script>
+              function loadGoogleTranslate() {
+                new google.translate.TranslateElement("google_element")
+              }
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header">
+      <div class="navbar">
+        <a href="{{url_for('index')}}">Home</a>
+        <a href="{{url_for('news')}}">News</a>
+        <a href="{{url_for('crop_prediction')}}">Crop Prediction</a>
+        <a href="{{url_for('crop_calendar')}}">Crop Calendar</a>
+        <a href="{{url_for('crop_care')}}">Crop Care</a>
+        <a href="{{url_for('fertilizer_calculator')}}">Fertilizer Calculator</a>
+        <a href="{{url_for('government_schemes')}}">Schemes</a>
+        <a href="{{url_for('crop_rotation')}}">Crop Rotation</a>
+        <a href="{{url_for('weather')}}">Weather</a>
+        <a href="{{url_for('analytics_dashboard')}}">Analytics</a>
+        <a href="{{url_for('about')}}">About</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{url_for('auth.logout')}}" style="color: #ff4c4c;">Logout ({{ current_user.username }})</a>
+        {% else %}
+          <a href="{{url_for('auth.login')}}">Login</a>
+          <a href="{{url_for('auth.register')}}">Register</a>
+        {% endif %}
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages" style="padding: 10px; text-align: center;">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="background-color: {% if category == 'error' %}#ffcccc{% else %}#ccffcc{% endif %}; padding: 10px; margin: 5px; border-radius: 5px;">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <footer>
+      <div class="foot-panel1">
+        Back to Top
+      </div>
+      <div class="foot-panel2">
+        <ul>
+          <p>Get to know us</p>
+          <a>About Us</a>
+          <a>Careers</a>
+          <a>Press Releases</a>
+          <a>Agri-Solutions</a>
+        </ul>
+        <!-- ... other foot panels ... -->
+      </div>
+      <div class="foot-panel4">
+        <div class="pages">
+          <a>Condition of Use</a>
+          <a>Privacy Notice</a>
+          <a>Your Ads Privacy Choices</a>
+        </div>
+        <div class="copyright">© 1996-2023, Agri-Solutions.com, Inc. or its affiliates</div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
